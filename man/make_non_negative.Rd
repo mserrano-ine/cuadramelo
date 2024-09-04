@@ -4,7 +4,7 @@
 \alias{make_non_negative}
 \title{Make non-negative}
 \usage{
-make_non_negative(Y)
+make_non_negative(Y, allowSack = FALSE)
 }
 \arguments{
 \item{X}{Matrix to be positivized.}

@@ -45,6 +45,7 @@ stack.matrix <- function(X) {
 #' rowSums(X3)
 #' @importFrom dplyr near
 #' @importFrom MASS ginv
+#' @export
 balance_matrix <- function(Y, v = NULL, h = NULL) {
   y <- stack.matrix(Y)
   n <- ncol(Y)
@@ -101,7 +102,8 @@ balance_matrix <- function(Y, v = NULL, h = NULL) {
 #' make_non_negative(Y)
 #' make_non_negative(Y, allowSlack = T) |> round()
 #' @import CVXR
-make_non_negative <- function(Y) {
+#' @export
+make_non_negative <- function(Y, allowSack = FALSE) {
   library(CVXR)
   n <- ncol(Y)
   m <- nrow(Y)
