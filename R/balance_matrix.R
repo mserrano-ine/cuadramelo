@@ -76,3 +76,49 @@ balance_matrix <- function(Y, v = NULL, h = NULL) {
                  change = norm(X-Y,"2"))
   return(result)
 }
+
+#' Make non-negative
+#'
+#' Modifies as little as possible the entries of a matrix
+#' in order to make them non-negative, keeping row and column totals unchanged.
+#' @param X Matrix to be positivized.
+#' @returns A non-negative matrix, except if it is imposible to balance the
+#' matrix.
+#' @examples
+#' Y <- c(1,2,-1,1,
+#'        2,2,3,1,
+#'        1,1,-2,3) |>
+#'        matrix(nrow = 3)
+#' X <- make_non_negative(Y)
+#' Y
+#' X |> round(2)
+#' rowSums(Y)
+#' rowSums(X)
+#' colSums(Y)
+#' colSums(X)
+#' set.seed(2)
+#' Y <- rnorm(3*5) |> matrix(3,5) |> round(3)
+#' make_non_negative(Y)
+#' make_non_negative(Y, allowSlack = T) |> round()
+#' @import CVXR
+make_non_negative <- function(Y) {
+  library(CVXR)
+  n <- ncol(Y)
+  m <- nrow(Y)
+  X <- Variable(m,n)
+  v <- colSums(Y)
+  h <- rowSums(Y)
+  slackH <- Variable(m)
+  slackV <- Variable(n)
+  cons <- list(sum_entries(X, 1) == h + as.numeric(allowSlack)*slackH,
+               sum_entries(X, 2) == v + as.numeric(allowSlack)*slackV,
+               X >= 0)
+  obj <- Minimize(sum_squares(X-Y)+sum_squares(slackH)+sum_squares(slackV))
+  p <- Problem(obj, cons)
+  sol <- CVXR::solve(p)
+  if (sol$status != "optimal") {
+    stop(paste("Optimal solution not found. Solution status:", sol$status))
+  } else {
+    return(sol$getValue(X))
+  }
+}
