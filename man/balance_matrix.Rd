@@ -4,7 +4,7 @@
 \alias{balance_matrix}
 \title{Balance matrix}
 \usage{
-balance_matrix(Y, v = NULL, h = NULL)
+balance_matrix(Y, v = NULL, h = NULL, allow_negative = TRUE)
 }
 \arguments{
 \item{Y}{Matrix to be balanced.}
@@ -12,10 +12,12 @@ balance_matrix(Y, v = NULL, h = NULL)
 \item{v}{(optional) Desired sum of columns.}
 
 \item{h}{(optional) Desired sum of rows.}
+
+\item{allow_negative}{Are negative entries in the balanced matrix allowed?}
 }
 \value{
-A list containing \code{X}, the balanced matrix, and a
-measure of the change the balancing did to the original matrix.
+A list containing \code{X}, the balanced matrix, and the 2-norm
+of the change the balancing did to the original matrix.
 }
 \description{
 Balances a matrix so that the columns and/or rows add up

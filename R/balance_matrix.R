@@ -16,6 +16,7 @@ stack.matrix <- function(X) {
 #' @param Y Matrix to be balanced.
 #' @param v (optional) Desired sum of columns.
 #' @param h (optional) Desired sum of rows.
+#' @param allow_negative Are negative entries in the balanced matrix allowed?
 #' @details
 #' Balancing is done according to the criteria of minimum sum
 #' of squares.
@@ -23,8 +24,8 @@ stack.matrix <- function(X) {
 #' If neither \code{v} nor \code{h} is given, the same matrix will be
 #' returned. If only one of them is given, only that axis will be
 #' balanced.
-#' @returns A list containing \code{X}, the balanced matrix, and a
-#' measure of the change the balancing did to the original matrix.
+#' @returns A list containing \code{X}, the balanced matrix, and the 2-norm
+#' of the change the balancing did to the original matrix.
 #' @examples
 #' set.seed(2)
 #' Y <- rnorm(3*5) |> matrix(3,5) |> round(3)
@@ -44,37 +45,41 @@ stack.matrix <- function(X) {
 #' h
 #' rowSums(X3)
 #' @importFrom dplyr near
-#' @importFrom MASS ginv
+#' @import CVXR
 #' @export
-balance_matrix <- function(Y, v = NULL, h = NULL) {
-  y <- stack.matrix(Y)
+balance_matrix <- function(Y, v = NULL, h = NULL, allow_negative = TRUE) {
   n <- ncol(Y)
   m <- nrow(Y)
-  a <- rep(1,m) # vector de agregación vertical
-  b <- t(rep(1,n)) # vector de agregación horizontal
-  C <- diag(n) %x% t(a) # verticales
-  R <- b %x% diag(m) # horizontales
-  z <- c(v,h)
+  X <- Variable(m,n)
   if (!is.null(h) & !is.null(v)) {
     ok <- dplyr::near(sum(h), sum(v), tol = 1e-8)
     if (!ok) {
       stop("sum(v) != sum(h) so balancing is infeasible!")
     }
-    H <- rbind(C,
-               R)
+    cons <- list(sum_entries(X, 1) == h,
+                 sum_entries(X, 2) == v,
+                 X >= 0)
   } else if (is.null(h)){
-    H <- C
-  } else {
-    H <- R
+    cons <- list(sum_entries(X, 2) == v,
+                 X >= 0)
+  } else if (is.null(v)){
+    cons <- list(sum_entries(X, 1) == h,
+                 X >= 0)
+  } else if (is.null(h) & is.null(v)) {
+    result <- list(X = Y,
+                   norm_of_change = 0)
+    return(result)
   }
-  G <- rbind(cbind(diag(n*m), t(H)),
-             cbind(H,diag(0,nrow(H))))
-  invG <- MASS::ginv(G)
-  w <- c(y,z)
-  x <- (invG %*% w)[1:(m*n),]
-  X <- matrix(x, m, n)
+  obj <- Minimize(sum_squares(X-Y))
+  p <- Problem(obj, cons)
+  sol <- CVXR::solve(p)
+  if (sol$status != "optimal") {
+    stop(paste("Optimal solution not found. Solution status:", sol$status))
+  } else {
+    X <- sol$getValue(X) |> round(8)
+  }
   result <- list(X = X,
-                 change = norm(X-Y,"2"))
+                 norm_of_change = norm(X-Y,"2"))
   return(result)
 }
 
