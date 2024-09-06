@@ -4,10 +4,12 @@
 \alias{make_non_negative}
 \title{Make non-negative}
 \usage{
-make_non_negative(Y, allowSack = FALSE)
+make_non_negative(Y, allowSlack = FALSE)
 }
 \arguments{
-\item{X}{Matrix to be positivized.}
+\item{Y}{Matrix to be positivized.}
+
+\item{allowSlack}{Can colSums and rowSums be modified?}
 }
 \value{
 A non-negative matrix, except if it is imposible to balance the
