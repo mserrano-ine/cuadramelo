@@ -4,17 +4,25 @@
 \alias{round_matrix}
 \title{Round a matrix}
 \usage{
-round_matrix(mat, digits = 0)
+round_matrix(Y)
 }
 \arguments{
-\item{mat}{A matrix}
-
-\item{digits}{Number of decimal places.}
+\item{Y}{A matrix.}
 }
 \value{
-A rounded matrix.
+The rounded matrix.
 }
 \description{
-Rounds the entries of a matrix to \code{digits} decimal places while
-preserving the rounded colSums and rowSums.
+Returns an integer matrix that preserves the rounded colSums and rowSums.
+}
+\examples{
+set.seed(2)
+Y <- rnorm(3*5) |> matrix(3,5) |> round(3)
+X <- round_matrix(Y)$X
+Y
+X
+colSums(Y) |> round()
+colSums(X)
+rowSums(Y) |> round()
+rowSums(X)
 }

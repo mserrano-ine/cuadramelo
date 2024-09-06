@@ -6,6 +6,7 @@
 #' @param v (optional) Desired sum of columns.
 #' @param h (optional) Desired sum of rows.
 #' @param allow_negative Are negative entries in the balanced matrix allowed?
+#' @param round Should the result be an integer matrix?
 #' @details
 #' Balancing is done according to the criteria of minimum sum
 #' of squares.
@@ -13,8 +14,9 @@
 #' If neither \code{v} nor \code{h} is given, the same matrix will be
 #' returned. If only one of them is given, only that axis will be
 #' balanced.
-#' @returns A list containing \code{X}, the balanced matrix, and the 2-norm
-#' of the change the balancing did to the original matrix.
+#' @returns A list containing \code{X}, the balanced matrix, \code{S} a matrix
+#' of slack variables, and the 2-norm #' of the change the balancing did
+#' to the original matrix.
 #' @examples
 #' set.seed(2)
 #' Y <- rnorm(3*5) |> matrix(3,5) |> round(3)
@@ -33,17 +35,22 @@
 #' X3 <- balance_matrix(Y, h = h)
 #' h
 #' rowSums(X3)
+#' balance_matrix(Y, v, h, FALSE, TRUE)$X
 #' @importFrom dplyr near
 #' @import CVXR
 #' @export
-balance_matrix <- function(Y, v = NULL, h = NULL, allow_negative = TRUE) {
+balance_matrix <- function(Y, v = NULL, h = NULL,
+                           allow_negative = TRUE,
+                           round = FALSE) {
   if (!methods::is(Y, "matrix")) {
     Y <- as.matrix(Y)
   }
   require(CVXR)
   n <- ncol(Y)
   m <- nrow(Y)
-  X <- Variable(m,n)
+  X <- Variable(m,n, integer = round)
+  S <- Variable(m,n)
+  Z <- X + S
   if (is.null(h) & is.null(v)) {
     result <- list(X = Y,
                    norm_of_change = 0)
@@ -54,25 +61,34 @@ balance_matrix <- function(Y, v = NULL, h = NULL, allow_negative = TRUE) {
     if (!ok) {
       stop("sum(v) != sum(h) so balancing is infeasible!")
     }
-    cons <- list(sum_entries(X, 1) == h,
-                 sum_entries(X, 2) == v,
-                 X >= 0)
+    cons <- list(sum_entries(Z, 1) == h,
+                 sum_entries(Z, 2) == v,
+                 (1-allow_negative)*X >= 0)
   } else if (is.null(h)){
-    cons <- list(sum_entries(X, 2) == v,
-                 X >= 0)
+    cons <- list(sum_entries(Z, 2) == v,
+                 (1-allow_negative)*X >= 0)
   } else if (is.null(v)){
-    cons <- list(sum_entries(X, 1) == h,
-                 X >= 0)
+    cons <- list(sum_entries(Z, 1) == h,
+                 (1-allow_negative)*X >= 0)
   }
-  obj <- Minimize(sum_squares(X-Y))
+  obj <- Minimize(sum_squares(X-Y)+sum_squares(S))
   p <- Problem(obj, cons)
   sol <- CVXR::solve(p)
   if (sol$status != "optimal") {
     stop(paste("Optimal solution not found. Solution status:", sol$status))
   } else {
     X <- sol$getValue(X) |> round(8)
+    S <- sol$getValue(S) |> round(8)
+  }
+  if (round) {
+    # X <- round(X)
+    # S <- round(S)
+    if (norm(S,"2")>0) {
+      warning("Rounding could not be done exactly. A slack was needed.")
+    }
   }
   result <- list(X = X,
+                 S = S,
                  norm_of_change = norm(X-Y,"2"))
   return(result)
 }
