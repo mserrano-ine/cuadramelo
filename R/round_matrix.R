@@ -54,8 +54,10 @@ round_matrix <- function(mat, digits=0) {
   return(rounded_mat)
 }
 
-# Función que implementa un algoritmo backtracking para encontrar la solución
-# al problema de redondeo de matrices
+#' Backtracking algorithm for rounding
+#'
+#' Implements a backtracking algorithm for matrix rounding.ç
+#' @importFrom utils head
 bg <- function(idx, row_diffs, col_diffs, elementos_marcados = list()){
   # Si se ha seleccionado todo: devolver la solución
   if(sum(c(row_diffs, col_diffs)) == 0)
