@@ -10,14 +10,14 @@ round_matrix(Y)
 \item{Y}{A matrix.}
 }
 \value{
-The rounded matrix.
+\code{X} the rounded matrix and \code{S} the slack variables needed.
 }
 \description{
 Returns an integer matrix that preserves the rounded colSums and rowSums.
 }
 \examples{
 set.seed(2)
-Y <- rnorm(3*5) |> matrix(3,5) |> round(3)
+Y <- rnorm(3*5)*10 |> matrix(3,5) |> round(3)
 X <- round_matrix(Y)$X
 Y
 X
