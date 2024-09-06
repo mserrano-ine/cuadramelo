@@ -1,14 +1,3 @@
-#' Stack matrix columns
-#'
-#' Stack the columns of a matrix into a vector.
-#' @param X A numerical matrix.
-#' @returns A vector whose i*j-th element is the i-th
-#' element of the j-th column.
-stack.matrix <- function(X) {
-  Y <- X |> as.data.frame() |> stack()
-  return(Y$values)
-}
-
 #' Balance matrix
 #'
 #' Balances a matrix so that the columns and/or rows add up
@@ -48,9 +37,18 @@ stack.matrix <- function(X) {
 #' @import CVXR
 #' @export
 balance_matrix <- function(Y, v = NULL, h = NULL, allow_negative = TRUE) {
+  if (!methods::is(Y, "matrix")) {
+    Y <- as.matrix(Y)
+  }
+  require(CVXR)
   n <- ncol(Y)
   m <- nrow(Y)
   X <- Variable(m,n)
+  if (is.null(h) & is.null(v)) {
+    result <- list(X = Y,
+                   norm_of_change = 0)
+    return(result)
+  }
   if (!is.null(h) & !is.null(v)) {
     ok <- dplyr::near(sum(h), sum(v), tol = 1e-8)
     if (!ok) {
@@ -65,10 +63,6 @@ balance_matrix <- function(Y, v = NULL, h = NULL, allow_negative = TRUE) {
   } else if (is.null(v)){
     cons <- list(sum_entries(X, 1) == h,
                  X >= 0)
-  } else if (is.null(h) & is.null(v)) {
-    result <- list(X = Y,
-                   norm_of_change = 0)
-    return(result)
   }
   obj <- Minimize(sum_squares(X-Y))
   p <- Problem(obj, cons)
@@ -87,7 +81,8 @@ balance_matrix <- function(Y, v = NULL, h = NULL, allow_negative = TRUE) {
 #'
 #' Modifies as little as possible the entries of a matrix
 #' in order to make them non-negative, keeping row and column totals unchanged.
-#' @param X Matrix to be positivized.
+#' @param Y Matrix to be positivized.
+#' @param allowSlack Can colSums and rowSums be modified?
 #' @returns A non-negative matrix, except if it is imposible to balance the
 #' matrix.
 #' @examples
@@ -108,8 +103,11 @@ balance_matrix <- function(Y, v = NULL, h = NULL, allow_negative = TRUE) {
 #' make_non_negative(Y, allowSlack = T) |> round()
 #' @import CVXR
 #' @export
-make_non_negative <- function(Y, allowSack = FALSE) {
-  library(CVXR)
+make_non_negative <- function(Y, allowSlack = FALSE) {
+  if (!methods::is(Y, "matrix")) {
+    Y <- as.matrix(Y)
+  }
+  require(CVXR)
   n <- ncol(Y)
   m <- nrow(Y)
   X <- Variable(m,n)
@@ -126,6 +124,7 @@ make_non_negative <- function(Y, allowSack = FALSE) {
   if (sol$status != "optimal") {
     stop(paste("Optimal solution not found. Solution status:", sol$status))
   } else {
-    return(sol$getValue(X))
+    X <- sol$getValue(X) |> round(8)
+    return(X)
   }
 }
