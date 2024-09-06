@@ -6,7 +6,7 @@
 #' @param v (optional) Desired sum of columns.
 #' @param h (optional) Desired sum of rows.
 #' @param allow_negative Are negative entries in the balanced matrix allowed?
-#' @param round Should the result be an integer matrix?
+#' @param round Should the result be rounded?
 #' @details
 #' Balancing is done according to the criteria of minimum sum
 #' of squares.
@@ -14,28 +14,32 @@
 #' If neither \code{v} nor \code{h} is given, the same matrix will be
 #' returned. If only one of them is given, only that axis will be
 #' balanced.
-#' @returns A list containing \code{X}, the balanced matrix, \code{S} a matrix
-#' of slack variables, and the 2-norm #' of the change the balancing did
-#' to the original matrix.
+#' @returns The balanced matrix.
 #' @examples
 #' set.seed(2)
 #' Y <- rnorm(3*5) |> matrix(3,5) |> round(3)
 #' v <- c( 0.876, -1.078, 3.452, 0.261, 1.349)
 #' h <- c(-1.851, 0.243, 6.468)
+#' X1 <- balance_matrix(Y, v, h)
 #' Y
-#' X1 <- balance_matrix(Y, v, h)$X
+#' X1
 #' h
 #' rowSums(X1)
 #' v
 #' colSums(X1)
-#' print(paste("The change has norm2 =", balance_matrix(Y, v, h)$change))
-#' X2 <- balance_matrix(Y, v = v)
-#' v
+#' X2 <- balance_matrix(Y, v, h, round = TRUE)$X
+#' Y
+#' X2
+#' h |> round()
+#' rowSums(X2)
+#' v |> round()
 #' colSums(X2)
-#' X3 <- balance_matrix(Y, h = h)
+#' X3 <- balance_matrix(Y, v = v)
+#' v
+#' colSums(X3)
+#' X4 <- balance_matrix(Y, h = h)
 #' h
-#' rowSums(X3)
-#' balance_matrix(Y, v, h, FALSE, TRUE)$X
+#' rowSums(X4)
 #' @importFrom dplyr near
 #' @import CVXR
 #' @export
@@ -48,49 +52,39 @@ balance_matrix <- function(Y, v = NULL, h = NULL,
   require(CVXR)
   n <- ncol(Y)
   m <- nrow(Y)
-  X <- Variable(m,n, integer = round)
-  S <- Variable(m,n)
-  Z <- X + S
+  X <- Variable(m,n)
   if (is.null(h) & is.null(v)) {
     result <- list(X = Y,
                    norm_of_change = 0)
     return(result)
   }
   if (!is.null(h) & !is.null(v)) {
-    ok <- dplyr::near(sum(h), sum(v), tol = 1e-8)
+    ok <- dplyr::near(sum(h), sum(v))
     if (!ok) {
       stop("sum(v) != sum(h) so balancing is infeasible!")
     }
-    cons <- list(sum_entries(Z, 1) == h,
-                 sum_entries(Z, 2) == v,
+    cons <- list(sum_entries(X, 1) == h,
+                 sum_entries(X, 2) == v,
                  (1-allow_negative)*X >= 0)
   } else if (is.null(h)){
-    cons <- list(sum_entries(Z, 2) == v,
+    cons <- list(sum_entries(X, 2) == v,
                  (1-allow_negative)*X >= 0)
   } else if (is.null(v)){
-    cons <- list(sum_entries(Z, 1) == h,
+    cons <- list(sum_entries(X, 1) == h,
                  (1-allow_negative)*X >= 0)
   }
-  obj <- Minimize(sum_squares(X-Y)+sum_squares(S))
+  obj <- Minimize(sum_squares(X-Y))
   p <- Problem(obj, cons)
   sol <- CVXR::solve(p)
   if (sol$status != "optimal") {
     stop(paste("Optimal solution not found. Solution status:", sol$status))
   } else {
     X <- sol$getValue(X) |> round(8)
-    S <- sol$getValue(S) |> round(8)
   }
   if (round) {
-    # X <- round(X)
-    # S <- round(S)
-    if (norm(S,"2")>0) {
-      warning("Rounding could not be done exactly. A slack was needed.")
-    }
+    X <- round_matrix(X)
   }
-  result <- list(X = X,
-                 S = S,
-                 norm_of_change = norm(X-Y,"2"))
-  return(result)
+  return(X)
 }
 
 #' Make non-negative

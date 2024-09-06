@@ -15,12 +15,10 @@ balance_matrix(Y, v = NULL, h = NULL, allow_negative = TRUE, round = FALSE)
 
 \item{allow_negative}{Are negative entries in the balanced matrix allowed?}
 
-\item{round}{Should the result be an integer matrix?}
+\item{round}{Should the result be rounded?}
 }
 \value{
-A list containing \code{X}, the balanced matrix, \code{S} a matrix
-of slack variables, and the 2-norm #' of the change the balancing did
-to the original matrix.
+The balanced matrix.
 }
 \description{
 Balances a matrix so that the columns and/or rows add up
@@ -39,18 +37,24 @@ set.seed(2)
 Y <- rnorm(3*5) |> matrix(3,5) |> round(3)
 v <- c( 0.876, -1.078, 3.452, 0.261, 1.349)
 h <- c(-1.851, 0.243, 6.468)
+X1 <- balance_matrix(Y, v, h)
 Y
-X1 <- balance_matrix(Y, v, h)$X
+X1
 h
 rowSums(X1)
 v
 colSums(X1)
-print(paste("The change has norm2 =", balance_matrix(Y, v, h)$change))
-X2 <- balance_matrix(Y, v = v)
-v
+X2 <- balance_matrix(Y, v, h, round = TRUE)$X
+Y
+X2
+h |> round()
+rowSums(X2)
+v |> round()
 colSums(X2)
-X3 <- balance_matrix(Y, h = h)
+X3 <- balance_matrix(Y, v = v)
+v
+colSums(X3)
+X4 <- balance_matrix(Y, h = h)
 h
-rowSums(X3)
-balance_matrix(Y, v, h, FALSE, TRUE)$X
+rowSums(X4)
 }
