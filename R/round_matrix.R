@@ -3,6 +3,7 @@
 #' Returns an integer matrix that preserves the rounded colSums and rowSums.
 #' @param Y A matrix.
 #' @param digits Decimal places to round to.
+#' @returns The rounded matrix.
 #' @examples
 #' set.seed(6)
 #' Y <- rnorm(3*5)*10 |> matrix(3,5) |> round(3)
