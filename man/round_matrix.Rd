@@ -4,21 +4,32 @@
 \alias{round_matrix}
 \title{Round a matrix}
 \usage{
-round_matrix(Y)
+round_matrix(Y, digits = 0)
 }
 \arguments{
 \item{Y}{A matrix.}
+
+\item{digits}{Decimal places to round to.}
 }
 \value{
-\code{X} the rounded matrix and \code{S} the slack variables needed.
+The rounded matrix.
 }
 \description{
 Returns an integer matrix that preserves the rounded colSums and rowSums.
 }
 \examples{
+set.seed(6)
+Y <- rnorm(3*5)*10 |> matrix(3,5) |> round(3)
+X <- round_matrix(Y)
+Y
+X
+colSums(Y) |> round()
+colSums(X)
+rowSums(Y) |> round()
+rowSums(X)
 set.seed(2)
 Y <- rnorm(3*5)*10 |> matrix(3,5) |> round(3)
-X <- round_matrix(Y)$X
+X <- round_matrix(Y)
 Y
 X
 colSums(Y) |> round()
