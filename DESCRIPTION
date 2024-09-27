@@ -1,7 +1,7 @@
 Package: cuadramelo
 Type: Package
 Title: Matrix balancing and rounding
-Version: 0.5.0
+Version: 0.6.0
 Authors@R: 
     person("Miguel", "Serrano", , "miguel.serrano.martin@ine.es", 
             role = c("aut", "cre"))
