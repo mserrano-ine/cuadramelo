@@ -17,6 +17,16 @@ The rounded matrix.
 \description{
 Returns an integer matrix that preserves the rounded colSums and rowSums.
 }
+\details{
+The function will throw a *warning* if the problem is infeasable. To be able
+to round the matrix in this fashion, the following things must be equal:
+\itemize{
+ \item{a}{the sum of the differences between the row totals and
+ the rounded row totals}
+ \item{b}{the sum of the differences between the column totals and
+ the rounded row totals}
+}
+}
 \examples{
 set.seed(6)
 Y <- rnorm(3*5)*10 |> matrix(3,5) |> round(3)

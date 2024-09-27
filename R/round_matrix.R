@@ -4,6 +4,15 @@
 #' @param Y A matrix.
 #' @param digits Decimal places to round to.
 #' @returns The rounded matrix.
+#' @details
+#' The function will throw a *warning* if the problem is infeasable. To be able
+#' to round the matrix in this fashion, the following things must be equal:
+#' \itemize{
+#'  \item{a}{the sum of the differences between the row totals and
+#'  the rounded row totals}
+#'  \item{b}{the sum of the differences between the column totals and
+#'  the rounded row totals}
+#' }
 #' @examples
 #' set.seed(6)
 #' Y <- rnorm(3*5)*10 |> matrix(3,5) |> round(3)
@@ -24,8 +33,6 @@
 #' rowSums(Y) |> round()
 #' rowSums(X)
 #' @export
-# Función que redondea los elementos de una matriz a <digit> cifras decimales
-# respetando la suma redondeada de las filas y las columnas.
 round_matrix <- function(Y, digits=0) {
   mat_up <- Y * (10**digits)
   # Suma redondeadas de filas y columnas originales
@@ -74,10 +81,6 @@ round_matrix <- function(Y, digits=0) {
   return(rounded_mat)
 }
 
-#' Backtracking algorithm for rounding
-#'
-#' Solves the problem of rounding a matriz while preserving rowSums and colSums
-#' via a backtracking algorithm.
 bg <- function(idx, row_diffs, col_diffs, elementos_marcados = list()){
   # Si se ha seleccionado todo: devolver la solución
   if(sum(c(row_diffs, col_diffs)) == 0)

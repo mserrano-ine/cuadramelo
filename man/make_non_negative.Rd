@@ -12,7 +12,7 @@ make_non_negative(Y, allowSlack = FALSE)
 \item{allowSlack}{Can colSums and rowSums be modified?}
 }
 \value{
-A non-negative matrix, except if it is imposible to balance the
+A non-negative matrix, except if it is impossible to balance the
 matrix.
 }
 \description{

@@ -4,7 +4,7 @@
 \alias{balance_matrix}
 \title{Balance matrix}
 \usage{
-balance_matrix(Y, v = NULL, h = NULL, allow_negative = TRUE, round = FALSE)
+balance_matrix(Y, v = NULL, h = NULL, allow_negative = TRUE)
 }
 \arguments{
 \item{Y}{Matrix to be balanced.}
@@ -14,8 +14,6 @@ balance_matrix(Y, v = NULL, h = NULL, allow_negative = TRUE, round = FALSE)
 \item{h}{(optional) Desired sum of rows.}
 
 \item{allow_negative}{Are negative entries in the balanced matrix allowed?}
-
-\item{round}{Should the result be rounded?}
 }
 \value{
 The balanced matrix.
@@ -44,13 +42,6 @@ h
 rowSums(X1)
 v
 colSums(X1)
-X2 <- balance_matrix(Y, v, h, round = TRUE)$X
-Y
-X2
-h |> round()
-rowSums(X2)
-v |> round()
-colSums(X2)
 X3 <- balance_matrix(Y, v = v)
 v
 colSums(X3)

@@ -6,7 +6,6 @@
 #' @param v (optional) Desired sum of columns.
 #' @param h (optional) Desired sum of rows.
 #' @param allow_negative Are negative entries in the balanced matrix allowed?
-#' @param round Should the result be rounded?
 #' @details
 #' Balancing is done according to the criteria of minimum sum
 #' of squares.
@@ -27,13 +26,6 @@
 #' rowSums(X1)
 #' v
 #' colSums(X1)
-#' X2 <- balance_matrix(Y, v, h, round = TRUE)$X
-#' Y
-#' X2
-#' h |> round()
-#' rowSums(X2)
-#' v |> round()
-#' colSums(X2)
 #' X3 <- balance_matrix(Y, v = v)
 #' v
 #' colSums(X3)
@@ -44,8 +36,7 @@
 #' @import CVXR
 #' @export
 balance_matrix <- function(Y, v = NULL, h = NULL,
-                           allow_negative = TRUE,
-                           round = FALSE) {
+                           allow_negative = TRUE) {
   if (!methods::is(Y, "matrix")) {
     Y <- as.matrix(Y)
   }
@@ -54,9 +45,13 @@ balance_matrix <- function(Y, v = NULL, h = NULL,
   m <- nrow(Y)
   X <- Variable(m,n)
   if (is.null(h) & is.null(v)) {
-    result <- list(X = Y,
-                   norm_of_change = 0)
-    return(result)
+    if ((any(Y) < 0) & !allow_negative) {
+      cons <- list(X >= 0)
+    } else {
+      result <- list(X = Y,
+                     norm_of_change = 0)
+      return(result)
+    }
   }
   if (!is.null(h) & !is.null(v)) {
     ok <- dplyr::near(sum(h), sum(v))
@@ -81,9 +76,6 @@ balance_matrix <- function(Y, v = NULL, h = NULL,
   } else {
     X <- sol$getValue(X) |> round(8)
   }
-  if (round) {
-    X <- round_matrix(X)
-  }
   return(X)
 }
 
@@ -93,7 +85,7 @@ balance_matrix <- function(Y, v = NULL, h = NULL,
 #' in order to make them non-negative, keeping row and column totals unchanged.
 #' @param Y Matrix to be positivized.
 #' @param allowSlack Can colSums and rowSums be modified?
-#' @returns A non-negative matrix, except if it is imposible to balance the
+#' @returns A non-negative matrix, except if it is impossible to balance the
 #' matrix.
 #' @examples
 #' Y <- c(1,2,-1,1,
