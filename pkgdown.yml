@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   getting-started: getting-started.html
-last_built: 2024-09-27T20:31Z
+last_built: 2024-09-27T23:43Z
 urls:
   reference: https://mserrano-ine.github.io/cuadramelo/reference
   article: https://mserrano-ine.github.io/cuadramelo/articles
