@@ -3,14 +3,14 @@
 #' Balances a matrix so that the columns and/or rows add up
 #' to a certain vector.
 #' @param Y Matrix to be balanced.
-#' @param v (optional) Desired sum of columns.
-#' @param h (optional) Desired sum of rows.
+#' @param col_totals (optional) Desired sum of columns.
+#' @param row_totals (optional) Desired sum of rows.
 #' @param allow_negative Are negative entries in the balanced matrix allowed?
 #' @details
 #' Balancing is done according to the criteria of minimum sum
 #' of squares.
 #'
-#' If neither \code{v} nor \code{h} is given, the same matrix will be
+#' If neither \code{col_totals} nor \code{row_totals} is given, the same matrix will be
 #' returned. If only one of them is given, only that axis will be
 #' balanced.
 #' @returns The balanced matrix.
@@ -26,16 +26,16 @@
 #' rowSums(X1)
 #' v
 #' colSums(X1)
-#' X3 <- balance_matrix(Y, v = v)
+#' X3 <- balance_matrix(Y, col_totals = v)
 #' v
 #' colSums(X3)
-#' X4 <- balance_matrix(Y, h = h)
+#' X4 <- balance_matrix(Y, row_totals = h)
 #' h
 #' rowSums(X4)
 #' @importFrom dplyr near
 #' @import CVXR
 #' @export
-balance_matrix <- function(Y, v = NULL, h = NULL,
+balance_matrix <- function(Y, col_totals = NULL, row_totals = NULL,
                            allow_negative = TRUE) {
   if (!methods::is(Y, "matrix")) {
     Y <- as.matrix(Y)
@@ -44,7 +44,7 @@ balance_matrix <- function(Y, v = NULL, h = NULL,
   n <- ncol(Y)
   m <- nrow(Y)
   X <- Variable(m,n)
-  if (is.null(h) & is.null(v)) {
+  if (is.null(row_totals) & is.null(col_totals)) {
     if ((any(Y) < 0) & !allow_negative) {
       cons <- list(X >= 0)
     } else {
@@ -53,19 +53,19 @@ balance_matrix <- function(Y, v = NULL, h = NULL,
       return(result)
     }
   }
-  if (!is.null(h) & !is.null(v)) {
-    ok <- dplyr::near(sum(h), sum(v))
+  if (!is.null(row_totals) & !is.null(col_totals)) {
+    ok <- dplyr::near(sum(row_totals), sum(col_totals))
     if (!ok) {
-      stop("sum(v) != sum(h) so balancing is infeasible!")
+      stop("sum(col_totals) != sum(row_totals) so balancing is infeasible!")
     }
-    cons <- list(sum_entries(X, 1) == h,
-                 sum_entries(X, 2) == v,
+    cons <- list(sum_entries(X, 1) == row_totals,
+                 sum_entries(X, 2) == col_totals,
                  (1-allow_negative)*X >= 0)
-  } else if (is.null(h)){
-    cons <- list(sum_entries(X, 2) == v,
+  } else if (is.null(row_totals)){
+    cons <- list(sum_entries(X, 2) == col_totals,
                  (1-allow_negative)*X >= 0)
-  } else if (is.null(v)){
-    cons <- list(sum_entries(X, 1) == h,
+  } else if (is.null(col_totals)){
+    cons <- list(sum_entries(X, 1) == row_totals,
                  (1-allow_negative)*X >= 0)
   }
   obj <- Minimize(sum_squares(X-Y))
