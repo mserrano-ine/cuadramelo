@@ -32,8 +32,7 @@
 #' colSums(X)
 #' rowSums(Y) |> round()
 #' rowSums(X)
-#' @export
-round_matrix <- function(Y, digits=0) {
+round_matrix_bivariate <- function(Y, digits=0) {
   mat_up <- Y * (10**digits)
   # Suma redondeadas de filas y columnas originales
   original_row_sums <- round(rowSums(mat_up))
@@ -115,4 +114,64 @@ bg <- function(idx, row_diffs, col_diffs, elementos_marcados = list()){
   }
 
   return(s)
+}
+
+#' Round univariate
+#'
+#' Rounds a vector preserving the rounded sum.
+#' @param x A vector.
+#' @param digits Number of decimal places to be rounded to.
+round_vector <- function(x, digits = 0){
+  x <- as.vector(x)
+  up <- 10**digits
+  x <- x*up
+  y <- floor(x)
+  indices <- tail(order(x-y), round(sum(x)) - sum(y))
+  y[indices] <- y[indices] + 1
+  return(y/up)
+}
+
+#' Round a matrix
+#'
+#' Returns an integer matrix that preserves the rounded colSums and rowSums.
+#' @param Y A matrix.
+#' @param digits Decimal places to round to.
+#' @param MARGIN One of
+#' \itemize{
+#'  \item{0} Preserves the rounded colSums and rowSums.
+#'  \item{1} Preserves the rounded rowSums independently of each other.
+#'  \item{2} Preserves the rounded colSums independently of each other.
+#' }
+#' @returns The rounded matrix.
+#' @details
+#' The function will throw a *warning* if the problem is infeasable. To be able
+#' to round the matrix in this fashion, the following things must be equal:
+#' \itemize{
+#'  \item{a}{the sum of the differences between the row totals and
+#'  the rounded row totals}
+#'  \item{b}{the sum of the differences between the column totals and
+#'  the rounded row totals}
+#' }
+#' @examples
+#' set.seed(6)
+#' Y <- rnorm(3*5)*10 |> matrix(3,5) |> round(3)
+#' X <- round_matrix(Y)
+#' Y
+#' X
+#' colSums(Y) |> round()
+#' colSums(X)
+#' rowSums(Y) |> round()
+#' rowSums(X)
+#' @export
+round_matrix <- function(Y, digits = 0, MARGIN = 0) {
+  if (MARGIN == 0) {
+    X <- round_matrix_bivariate(Y,digits)
+  } else  if (MARGIN == 1) {
+    X <- apply(Y, MARGIN = 1, round_vector, digits = digits) |> t()
+  } else  if (MARGIN == 2) {
+    X <- apply(Y, MARGIN = 2, round_vector, digits = digits)
+  } else {
+    stop("MARGIN must be 0, 1 or 2.")
+  }
+  return(X)
 }
