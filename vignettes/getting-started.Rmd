@@ -1,5 +1,5 @@
 ---
-title: "getting-started"
+title: "Getting started"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{getting-started}
@@ -13,25 +13,43 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 library(cuadramelo)
-data("example_matrix", "col_totals", "row_totals", package = "cuadramelo")
+set.seed(2)
+example_matrix <- rnorm(3*5) |> matrix(3,5) |> round(3)
+col_totals <- c( 0.870, -1.070, 3.450, 0.260, 1.350)
+row_totals <- c(-1.851, 0.243, 6.468)
 ```
-# Getting started
-
-## Balancing matrices
+# Balancing matrices
 
 This section concerns the problem of slightly adjusting a matrix so that
 its row and column totals add up to given vectors. The `balance_matrix()`
 function can help with that.
 
-Consider the example matrix included in the package and the desired row and column totals.
+> **Remark:** In order for the adjustment to be possible, the sum of those
+two vectors must be the same. This only makes sense, because both must equal
+the sum of the whole resulting matrix.
+
+## Balancing a simple matrix
+
+Consider the example matrix
 
 ```{r}
 example_matrix
+```
+
+and the desired row totals
+
+```{r}
 row_totals
+```
+
+and column totals,
+
+```{r}
 col_totals
 ```
 
-These totals are mildly different from those of the matrix.
+
+which are mildly different from those of the matrix.
 
 ```{r}
 colSums(example_matrix) - col_totals
@@ -46,12 +64,12 @@ tallied_matrix - example_matrix
 (rowSums(tallied_matrix) - row_totals) |> round(7)
 (colSums(tallied_matrix) - col_totals) |> round(7)
 ```
+
 We don't need to provide both the row and column totals. If only the
-column totals are provided, the tallying is done to match only those,
-getting extra degrees of freedom.
+column totals (or rows) are provided, the tallying is done to match only those.
 
 ```{r}
-tallied_matrix <- balance_matrix(example_matrix, v = col_totals)
+tallied_matrix <- balance_matrix(example_matrix, col_totals)
 tallied_matrix - example_matrix
 (rowSums(tallied_matrix) - row_totals) |> round(7)
 (colSums(tallied_matrix) - col_totals) |> round(7)
