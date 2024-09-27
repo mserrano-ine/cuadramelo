@@ -1,0 +1,58 @@
+---
+title: "getting-started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{getting-started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(cuadramelo)
+data("example_matrix", "col_totals", "row_totals", package = "cuadramelo")
+```
+# Getting started
+
+## Balancing matrices
+
+This section concerns the problem of slightly adjusting a matrix so that
+its row and column totals add up to given vectors. The `balance_matrix()`
+function can help with that.
+
+Consider the example matrix included in the package and the desired row and column totals.
+
+```{r}
+example_matrix
+row_totals
+col_totals
+```
+
+These totals are mildly different from those of the matrix.
+
+```{r}
+colSums(example_matrix) - col_totals
+rowSums(example_matrix) - row_totals
+```
+
+Let's use our function to solve this problem.
+
+```{r message=FALSE, warning=FALSE}
+tallied_matrix <- balance_matrix(example_matrix, col_totals, row_totals)
+tallied_matrix - example_matrix
+(rowSums(tallied_matrix) - row_totals) |> round(7)
+(colSums(tallied_matrix) - col_totals) |> round(7)
+```
+We don't need to provide both the row and column totals. If only the
+column totals are provided, the tallying is done to match only those,
+getting extra degrees of freedom.
+
+```{r}
+tallied_matrix <- balance_matrix(example_matrix, v = col_totals)
+tallied_matrix - example_matrix
+(rowSums(tallied_matrix) - row_totals) |> round(7)
+(colSums(tallied_matrix) - col_totals) |> round(7)
+```
