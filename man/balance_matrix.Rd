@@ -4,14 +4,14 @@
 \alias{balance_matrix}
 \title{Balance matrix}
 \usage{
-balance_matrix(Y, v = NULL, h = NULL, allow_negative = TRUE)
+balance_matrix(Y, col_totals = NULL, row_totals = NULL, allow_negative = TRUE)
 }
 \arguments{
 \item{Y}{Matrix to be balanced.}
 
-\item{v}{(optional) Desired sum of columns.}
+\item{col_totals}{(optional) Desired sum of columns.}
 
-\item{h}{(optional) Desired sum of rows.}
+\item{row_totals}{(optional) Desired sum of rows.}
 
 \item{allow_negative}{Are negative entries in the balanced matrix allowed?}
 }
@@ -26,7 +26,7 @@ to a certain vector.
 Balancing is done according to the criteria of minimum sum
 of squares.
 
-If neither \code{v} nor \code{h} is given, the same matrix will be
+If neither \code{col_totals} nor \code{row_totals} is given, the same matrix will be
 returned. If only one of them is given, only that axis will be
 balanced.
 }
@@ -42,10 +42,10 @@ h
 rowSums(X1)
 v
 colSums(X1)
-X3 <- balance_matrix(Y, v = v)
+X3 <- balance_matrix(Y, col_totals = v)
 v
 colSums(X3)
-X4 <- balance_matrix(Y, h = h)
+X4 <- balance_matrix(Y, row_totals = h)
 h
 rowSums(X4)
 }

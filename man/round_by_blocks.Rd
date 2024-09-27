@@ -4,17 +4,32 @@
 \alias{round_by_blocks}
 \title{Round matrix by blocks}
 \usage{
-round_by_blocks(Y, MARGIN, L, digits = 0)
+round_by_blocks(Y, layout, L, digits = 0, MARGIN_BLOCK = 0)
 }
 \arguments{
-\item{Y}{Matrix}
+\item{Y}{Matrix.}
 
-\item{MARGIN}{1 horizontal, 2 vertical.}
+\item{layout}{The blocks are distributed: 1 horizontally, 2 vertically.}
 
-\item{L}{Number of lines of the block.}
+\item{L}{Number of lines that a block encompasses.}
 
 \item{digits}{Number of decimal places to be rounded to.}
+
+\item{MARGIN_BLOCK}{For each block
+\itemize{
+ \item{0} Preserves the rounded colSums and rowSums.
+ \item{1} Preserves the rounded rowSums independently of each other.
+ \item{2} Preserves the rounded colSums independently of each other.
+}}
 }
 \description{
-Applies \code{round_matrix()} to the blocks using \code{apply_by_block()}.
+Applies \code{round_matrix()} to equally-sized blocks that partition the
+matrix either vertically or horizontally.
+}
+\examples{
+set.seed(10)
+Y <- (rnorm(32)*10) |> matrix(ncol = 2) |> round(3)
+X <- round_by_blocks(Y, 2, 4)
+U <- Y[5:8,] |> round_matrix()
+X[5:8,] - U
 }

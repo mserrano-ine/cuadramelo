@@ -4,12 +4,12 @@
 \alias{apply_by_block}
 \title{Modify matrix by blocks}
 \usage{
-apply_by_block(Y, MARGIN, L, FUN, ...)
+apply_by_block(Y, layout, L, FUN, ...)
 }
 \arguments{
 \item{Y}{Matrix}
 
-\item{MARGIN}{Blocks are distributed: 1 horizontally, 2 vertically.}
+\item{layout}{Blocks are distributed: 1 horizontally, 2 vertically.}
 
 \item{L}{Number of lines of the block.}
 
