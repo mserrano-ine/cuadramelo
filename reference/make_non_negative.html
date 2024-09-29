@@ -9,7 +9,7 @@ in order to make them non-negative, keeping row and column totals unchanged."><m
 
     <a class="navbar-brand me-2" href="../index.html">cuadramelo</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,9 +103,11 @@ matrix.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.897 -1.130  0.708 -0.139 -0.393</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.185 -0.080 -0.240  0.418 -1.040</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,]  1.588  0.132  1.984  0.982  1.782</span>
-<span class="r-in"><span><span class="fu">make_non_negative</span><span class="op">(</span><span class="va">Y</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in make_non_negative(Y):</span> Optimal solution not found. Solution status: infeasible</span>
-<span class="r-in"><span><span class="fu">make_non_negative</span><span class="op">(</span><span class="va">Y</span>, allowSlack <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="fu">make_non_negative</span><span class="op">(</span><span class="va">Y</span><span class="op">)</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;simpleError in make_non_negative(Y): Optimal solution not found. Solution status: infeasible&gt;</span>
+<span class="r-in"><span><span class="fu">make_non_negative</span><span class="op">(</span><span class="va">Y</span>, allowSlack <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      [,1] [,2] [,3] [,4] [,5]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]    0    0    0    0    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]    0    0    0    0    0</span>
