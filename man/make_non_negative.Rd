@@ -33,6 +33,7 @@ colSums(Y)
 colSums(X)
 set.seed(2)
 Y <- rnorm(3*5) |> matrix(3,5) |> round(3)
+Y
 make_non_negative(Y)
 make_non_negative(Y, allowSlack = T) |> round()
 }

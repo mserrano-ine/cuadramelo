@@ -1,0 +1,80 @@
+---
+title: "Rounding a matrix"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{round-matrix}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(cuadramelo)
+set.seed(6)
+example_matrix <- rnorm(3*5)*10 |> matrix(3,5) |> round(3)
+```
+
+# Rounding matrices while preserving totals
+
+A typical problem in official statistics is that of rounding a matrix whose columns are quarterly components of a total. In rounding, the rounded sum of the components for each quarter must be preserved and also the annual sum of each component.
+
+
+> **Remark:** To be able to round the matrix in this fashion, the following things must be equal:
+>
+> a) the sum of the differences between the row totals and the rounded row totals
+> b) the sum of the differences between the column totals and the rounded row totals
+
+## Rounding a simple matrix
+
+Consider the example matrix
+
+```{r}
+example_matrix
+```
+The `round_matrix()` function returns the following matrix.
+
+```{r}
+rounded_matrix <- round_matrix(example_matrix)
+rounded_matrix
+```
+
+And we may check that the rounded totals are preserved.
+
+```{r}
+colSums(rounded_matrix) - round(colSums(example_matrix))
+rowSums(rounded_matrix) - round(rowSums(example_matrix))
+```
+
+Sometimes we don't need to preserve the rounded sum in both directions. The argument `MARGIN` works like that of the `apply()` function. If we just need to round the matrix and preserve the rounded sums of each column independently, we may do it by setting `MARGIN = 2`.
+
+```{r}
+rounded_matrix <- round_matrix(example_matrix, MARGIN = 2)
+rounded_matrix
+colSums(rounded_matrix) - round(colSums(example_matrix))
+rowSums(rounded_matrix) - round(rowSums(example_matrix))
+```
+
+## Rounding a matrix by blocks
+
+Going back to the example of time series in official statistics, let us consider now a longer series, encompassing several years. We wish to apply `round_matrix()` to each year separately. This may be seen as applying the function to blocks 
+
+The `round_by_blocks()` function applies `round_matrix()` to each block. We have to indicate that the blocks are distributed vertically (`layout = 2`) and also that they are 4 rows long (`L = 4`). Blocks are assumed to be as wide as the matrix (or as tall as the matrix if distributed horizontally).
+
+The choice of the direction in which the rounded sums are preserved in each block is done with the argument `MARGING_BLOCK`, which is then passed to `MARGIN` in when `round_matrix()` is applied to the block.
+
+```{r include = FALSE}
+set.seed(10)
+example_block_matrix <- (rnorm(32)*10) |> matrix(ncol = 2) |> round(3)
+```
+
+```{r}
+example_block_matrix
+X <- round_by_blocks(example_block_matrix, 2, 4)
+U <- example_block_matrix[5:8,] |> round_matrix()
+X[5:8,] - U
+```
+
+The function solves the problem independently for each block. The blocks can be distributed horizontally and analogous considerations apply.

@@ -28,9 +28,9 @@ Returns an integer matrix that preserves the rounded colSums and rowSums.
 The function will throw a *warning* if the problem is infeasable. To be able
 to round the matrix in this fashion, the following things must be equal:
 \itemize{
- \item{a}{the sum of the differences between the row totals and
+ \item {the sum of the differences between the row totals and
  the rounded row totals}
- \item{b}{the sum of the differences between the column totals and
+ \item {the sum of the differences between the column totals and
  the rounded row totals}
 }
 }

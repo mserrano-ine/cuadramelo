@@ -1,37 +1,3 @@
-#' Round a matrix
-#'
-#' Returns an integer matrix that preserves the rounded colSums and rowSums.
-#' @param Y A matrix.
-#' @param digits Decimal places to round to.
-#' @returns The rounded matrix.
-#' @details
-#' The function will throw a *warning* if the problem is infeasable. To be able
-#' to round the matrix in this fashion, the following things must be equal:
-#' \itemize{
-#'  \item{a}{the sum of the differences between the row totals and
-#'  the rounded row totals}
-#'  \item{b}{the sum of the differences between the column totals and
-#'  the rounded row totals}
-#' }
-#' @examples
-#' set.seed(6)
-#' Y <- rnorm(3*5)*10 |> matrix(3,5) |> round(3)
-#' X <- round_matrix(Y)
-#' Y
-#' X
-#' colSums(Y) |> round()
-#' colSums(X)
-#' rowSums(Y) |> round()
-#' rowSums(X)
-#' set.seed(2)
-#' Y <- rnorm(3*5)*10 |> matrix(3,5) |> round(3)
-#' X <- round_matrix(Y)
-#' Y
-#' X
-#' colSums(Y) |> round()
-#' colSums(X)
-#' rowSums(Y) |> round()
-#' rowSums(X)
 round_matrix_bivariate <- function(Y, digits=0) {
   mat_up <- Y * (10**digits)
   # Suma redondeadas de filas y columnas originales
@@ -121,6 +87,7 @@ bg <- function(idx, row_diffs, col_diffs, elementos_marcados = list()){
 #' Rounds a vector preserving the rounded sum.
 #' @param x A vector.
 #' @param digits Number of decimal places to be rounded to.
+#' @export
 round_vector <- function(x, digits = 0){
   x <- as.vector(x)
   up <- 10**digits
@@ -147,9 +114,9 @@ round_vector <- function(x, digits = 0){
 #' The function will throw a *warning* if the problem is infeasable. To be able
 #' to round the matrix in this fashion, the following things must be equal:
 #' \itemize{
-#'  \item{a}{the sum of the differences between the row totals and
+#'  \item {the sum of the differences between the row totals and
 #'  the rounded row totals}
-#'  \item{b}{the sum of the differences between the column totals and
+#'  \item {the sum of the differences between the column totals and
 #'  the rounded row totals}
 #' }
 #' @examples

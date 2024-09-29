@@ -1,0 +1,106 @@
+---
+title: "Balancing a matrix"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{balance-matrix}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(cuadramelo)
+set.seed(2)
+example_matrix <- rnorm(3*5) |> matrix(3,5) |> round(3)
+col_totals <- c( 0.870, -1.070, 3.450, 0.260, 1.350)
+row_totals <- c(-1.851, 0.243, 6.468)
+```
+# Balancing matrices
+
+This section is concerned with the problem of slightly adjusting a matrix so that its row and column totals add up to given vector using `balance_matrix()`.
+
+> **Remark:** In order for the adjustment to be possible, the sum of those
+two vectors must be the same. This only makes sense, because both must equal
+the sum of the whole resulting matrix.
+
+## Balancing a simple matrix
+
+Consider the example matrix
+
+```{r}
+example_matrix
+```
+
+and the desired row totals
+
+```{r}
+row_totals
+```
+
+and column totals,
+
+```{r}
+col_totals
+```
+
+
+which are mildly different from those of the matrix.
+
+```{r}
+colSums(example_matrix) - col_totals
+rowSums(example_matrix) - row_totals
+```
+
+Let's use our function to solve this problem.
+
+```{r message=FALSE, warning=FALSE}
+tallied_matrix <- balance_matrix(example_matrix, col_totals, row_totals)
+tallied_matrix - example_matrix
+(rowSums(tallied_matrix) - row_totals) |> round(7)
+(colSums(tallied_matrix) - col_totals) |> round(7)
+```
+
+We don't need to provide both the row and column totals. If only the
+column totals (or rows) are provided, the tallying is done to match only those.
+
+```{r}
+tallied_matrix <- balance_matrix(example_matrix, col_totals)
+tallied_matrix - example_matrix
+(rowSums(tallied_matrix) - row_totals) |> round(7)
+(colSums(tallied_matrix) - col_totals) |> round(7)
+```
+
+## Balancing a matrix by blocks
+
+Sometimes one may need to balance a matrix that is made up of blocks. For example, suppose that the following $16\times4$ matrix is composed of 4 vertical $4\times 2$ blocks.
+
+```{r include = FALSE}
+set.seed(10)
+block_matrix <- (rnorm(32)*10) |> matrix(ncol = 2) |> round(3)
+block_col_totals <- aggregate(block_matrix, by = list(rep(1:4, times = rep(4,4))), FUN = sum)[, -1] |>
+  round() |> unname() |> as.matrix()
+```
+
+```{r}
+block_matrix
+```
+
+And we have the following matrix whose rows are the desired column totals for each of the blocks.
+
+```{r}
+block_col_totals
+```
+The `balance_by_blocks()` function applies `balance_matrix()` to each block using the totals given by the argument `col_totals`. When the blocks are distributed vertically (`layout = 2`), this argument must be a matrix as wide as the matrix to be balanced (`Y`),  and with a row for each block. We have to indicate also that the bloks are 4 rows long (`L = 4`). Blocks are assumed to be as wide as the matrix (or as tall as the matrix if distributed horizontally).
+
+
+```{r}
+X <- balance_by_blocks(block_matrix, col_totals = block_col_totals, 
+                       layout = 2, L = 4)
+X[9:12,] - balance_matrix(block_matrix[9:12,], block_col_totals[3,])
+```
+Just as with `balance_matrix()`, both `col_totals` and `row_totals` can be provided. In the case of vertically distributed blocks, `row_totals` is a vector with an entry for each row of the `Y` matrix. The function solves the problem independently for each block.
+
+The blocks can be distributed horizontally and analogous considerations apply.
