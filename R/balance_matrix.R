@@ -34,13 +34,14 @@
 #' rowSums(X4)
 #' @importFrom dplyr near
 #' @import CVXR
+#' @import methods
 #' @export
 balance_matrix <- function(Y, col_totals = NULL, row_totals = NULL,
                            allow_negative = TRUE) {
   if (!methods::is(Y, "matrix")) {
     Y <- as.matrix(Y)
   }
-  require(CVXR)
+  requireNamespace("CVXR")
   n <- ncol(Y)
   m <- nrow(Y)
   X <- Variable(m,n)
@@ -102,15 +103,18 @@ balance_matrix <- function(Y, col_totals = NULL, row_totals = NULL,
 #' set.seed(2)
 #' Y <- rnorm(3*5) |> matrix(3,5) |> round(3)
 #' Y
-#' make_non_negative(Y)
-#' make_non_negative(Y, allowSlack = T) |> round()
+#' tryCatch(make_non_negative(Y), error = function(e) {
+#'   print(e)
+#' })
+#' make_non_negative(Y, allowSlack = TRUE) |> round()
 #' @import CVXR
+#' @import methods
 #' @export
 make_non_negative <- function(Y, allowSlack = FALSE) {
   if (!methods::is(Y, "matrix")) {
     Y <- as.matrix(Y)
   }
-  require(CVXR)
+  requireNamespace("CVXR")
   n <- ncol(Y)
   m <- nrow(Y)
   X <- Variable(m,n)

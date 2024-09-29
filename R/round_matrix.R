@@ -16,25 +16,25 @@ round_matrix_bivariate <- function(Y, digits=0) {
   # no hay solución exacta
   posible.sol <- sum(row_diffs) == sum(col_diffs)
   if(!posible.sol)
-    warning("No hay solución exacta")
+    warning("There is no exact solution.")
 
-  # Elementos de la matriz ordenados decrecientemente por parte decimal
+  # Elements of the matrix in decreasing order by decimal part
   idx <- order(diff_mat, decreasing = T)
 
-  if(posible.sol) # Si hay posible solución, se busca la mejor
-    idx <- bg(idx, row_diffs, col_diffs) # Elementos seleccionados para redondear al alza
-  else if(idx[1] < 0){ # En caso de no existir solución exacta o no encontrar la mejor
-    idx <- order(diff_mat, decreasing = T) # Preparo los elementos para el siguiente bucle
+  if(posible.sol) # if there exist a solution, search for the best
+    idx <- bg(idx, row_diffs, col_diffs) # select elements to round up
+  else if(idx[1] < 0){ # if there isn't an exact solution or can't find the best
+    idx <- order(diff_mat, decreasing = T) # prepare for next loop
   }
-  # Si idx es una solución, simplemente se materializa
-  # Si es el vector de todos los elementos de la matriz, se ejecuta un algoritmo
-  # voraz para seleccionar la mejor primera solución
+  # if idx is a solution, accept it
+  # if it is the vector with every element in the matrix, a greedy algorithm
+  # is run to choose the best first solution
   for(i in idx){
-    # Fila y columna del elemento de la matriz
+    # Row and column of the element
     row <- (i-1)%%nrow(Y)+1
     col <- floor((i-1)/nrow(Y))+1
     if(row_diffs[row]>0 && col_diffs[col]>0){
-      # Redondeo al alza del elemento
+      # round the element up
       rounded_mat_up[row,col] <- rounded_mat_up[row,col] + 1
       row_diffs[row] <- row_diffs[row]-1
       col_diffs[col] <- col_diffs[col]-1
@@ -47,21 +47,21 @@ round_matrix_bivariate <- function(Y, digits=0) {
 }
 
 bg <- function(idx, row_diffs, col_diffs, elementos_marcados = list()){
-  # Si se ha seleccionado todo: devolver la solución
+  # If everything selected: return solution
   if(sum(c(row_diffs, col_diffs)) == 0)
     return(elementos_marcados)
-  # Si no  quedan elementos por seleccionar: salir
+  # If there are no elements left: out
   if(length(idx) == 0)
     return( -1 )
 
-  # Selecciona el elemento más prioritario a redondear al alza
+  # Choose the most critical element to be rounded up.
   e <- idx[1]
 
-  # Fila y columna del elemento seleccionado
+  # Row and column of the chosen element
   row <- (e-1)%%length(row_diffs)+1
   col <- floor((e-1)/length(row_diffs))+1
 
-  # Si el elemento se puede redondear al alza, se marca
+  # If the element can be rounded up, it is marked
   if(row_diffs[row]>0 && col_diffs[col]>0){
     row_diffs[row] <- row_diffs[row]-1
     col_diffs[col] <- col_diffs[col]-1
@@ -70,8 +70,8 @@ bg <- function(idx, row_diffs, col_diffs, elementos_marcados = list()){
 
   s <- bg(idx[-1], row_diffs, col_diffs, elementos_marcados)
 
-  # Si s=-1 entonces hay que eliminar el elemento seleccionado porque no
-  # conduce a una solución válida
+  # If s=-1, the chosen element must be eliminated because
+  # it doesn't lead to a valid solution
   if(s[1] < 0 && e == elementos_marcados[[length(elementos_marcados)]]){
     row_diffs[row] <- row_diffs[row]+1
     col_diffs[col] <- col_diffs[col]+1

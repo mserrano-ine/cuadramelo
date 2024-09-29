@@ -1,19 +1,23 @@
 Package: cuadramelo
 Type: Package
 Title: Matrix balancing and rounding
-Version: 0.6.0
+Version: 1.0.0
 Authors@R: 
     person("Miguel", "Serrano", , "miguel.serrano.martin@ine.es", 
             role = c("aut", "cre"))
-Description: This package has function for balancing and rounding matrices
+Description: This package has functions for balancing and rounding matrices
     subject to restrictions. One can adjust the matrix so that columns and
-    rows add up to given vectors, round a matrix keeping the column and row 
-    totals, etc.
-License: GPL-3.0-or-later
+    rows add up to given vectors, round a matrix while keeping the column
+    and row totals, etc.
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
-Imports: CVXR, dplyr
+Imports: 
+    CVXR,
+    dplyr,
+    methods,
+    utils
 URL: https://mserrano-ine.github.io/cuadramelo/
 Suggests: 
     knitr,
