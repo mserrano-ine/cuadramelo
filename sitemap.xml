@@ -1,7 +1,8 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://mserrano-ine.github.io/cuadramelo/404.html</loc></url>
-<url><loc>https://mserrano-ine.github.io/cuadramelo/articles/getting-started.html</loc></url>
+<url><loc>https://mserrano-ine.github.io/cuadramelo/articles/balance-matrix.html</loc></url>
 <url><loc>https://mserrano-ine.github.io/cuadramelo/articles/index.html</loc></url>
+<url><loc>https://mserrano-ine.github.io/cuadramelo/articles/round-matrix.html</loc></url>
 <url><loc>https://mserrano-ine.github.io/cuadramelo/authors.html</loc></url>
 <url><loc>https://mserrano-ine.github.io/cuadramelo/index.html</loc></url>
 <url><loc>https://mserrano-ine.github.io/cuadramelo/reference/apply_by_block.html</loc></url>
@@ -11,7 +12,6 @@
 <url><loc>https://mserrano-ine.github.io/cuadramelo/reference/make_non_negative.html</loc></url>
 <url><loc>https://mserrano-ine.github.io/cuadramelo/reference/round_by_blocks.html</loc></url>
 <url><loc>https://mserrano-ine.github.io/cuadramelo/reference/round_matrix.html</loc></url>
-<url><loc>https://mserrano-ine.github.io/cuadramelo/reference/round_matrix_bivariate.html</loc></url>
 <url><loc>https://mserrano-ine.github.io/cuadramelo/reference/round_vector.html</loc></url>
 </urlset>
 
