@@ -1,14 +1,11 @@
 Package: cuadramelo
 Type: Package
-Title: Matrix balancing and rounding
+Title: Matrix Balancing and Rounding
 Version: 1.0.0
 Authors@R: 
     person("Miguel", "Serrano", , "miguel.serrano.martin@ine.es", 
             role = c("aut", "cre"))
-Description: This package has functions for balancing and rounding matrices
-    subject to restrictions. One can adjust the matrix so that columns and
-    rows add up to given vectors, round a matrix while keeping the column
-    and row totals, etc.
+Description: Balancing and rounding matrices subject to restrictions. Adjustment of matrices so that columns and rows add up to given vectors, rounding of a matrix while keeping the column and/or row totals, performing these by blocks...
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

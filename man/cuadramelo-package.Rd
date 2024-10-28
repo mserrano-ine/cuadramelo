@@ -4,11 +4,11 @@
 \name{cuadramelo-package}
 \alias{cuadramelo}
 \alias{cuadramelo-package}
-\title{cuadramelo: Matrix balancing and rounding}
+\title{cuadramelo: Matrix Balancing and Rounding}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-This package has functions for balancing and rounding matrices subject to restrictions. One can adjust the matrix so that columns and rows add up to given vectors, round a matrix while keeping the column and row totals, etc.
+Balancing and rounding matrices subject to restrictions. Adjustment of matrices so that columns and rows add up to given vectors, rounding of a matrix while keeping the column and/or row totals, performing these by blocks...
 }
 \seealso{
 Useful links:

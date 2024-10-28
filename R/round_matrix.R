@@ -87,6 +87,13 @@ bg <- function(idx, row_diffs, col_diffs, elementos_marcados = list()){
 #' Rounds a vector preserving the rounded sum.
 #' @param x A vector.
 #' @param digits Number of decimal places to be rounded to.
+#' @returns description
+#' @examples
+#' set.seed(4)
+#' x <- (rnorm(5)*10) |> abs()
+#' y <- round_vector(x)
+#' cbind(x, y)
+#' round(sum(x)) - sum(y)
 #' @export
 round_vector <- function(x, digits = 0){
   x <- as.vector(x)

@@ -11,6 +11,16 @@ round_vector(x, digits = 0)
 
 \item{digits}{Number of decimal places to be rounded to.}
 }
+\value{
+description
+}
 \description{
 Rounds a vector preserving the rounded sum.
+}
+\examples{
+set.seed(4)
+x <- (rnorm(5)*10) |> abs()
+y <- round_vector(x)
+cbind(x, y)
+round(sum(x)) - sum(y)
 }

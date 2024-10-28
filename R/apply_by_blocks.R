@@ -43,6 +43,7 @@ apply_by_block <- function(Y, layout, L, FUN, ...){
 #'  \item{1} Preserves the rounded rowSums independently of each other.
 #'  \item{2} Preserves the rounded colSums independently of each other.
 #' }
+#' @returns The rounded matrix.
 #' @examples
 #' set.seed(10)
 #' Y <- (rnorm(32)*10) |> matrix(ncol = 2) |> round(3)
@@ -72,7 +73,7 @@ round_by_blocks <- function(Y, layout, L, digits = 0, MARGIN_BLOCK = 0) {
 #' When Y is composed of blocks arraged **horizontally**, col_totals is a
 #' (horizontal) vector, and row_totals is a matrix whose columns are the rowSums
 #' for each block.
-#'
+#' @returns The balanced matrix.
 #' @examples
 #' set.seed(10)
 #' Y <- (rnorm(32)*10) |> matrix(ncol = 2) |> round(3)

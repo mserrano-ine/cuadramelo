@@ -17,6 +17,9 @@ balance_by_blocks(Y, col_totals = NULL, row_totals = NULL, layout, L)
 
 \item{L}{Number of lines that a block encompasses.}
 }
+\value{
+The balanced matrix.
+}
 \description{
 Applies \code{balance_matrix()} to equally-sized blocks that partition the
 matrix either vertically or horizontally.

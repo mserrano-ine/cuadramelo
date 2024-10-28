@@ -22,6 +22,9 @@ round_by_blocks(Y, layout, L, digits = 0, MARGIN_BLOCK = 0)
  \item{2} Preserves the rounded colSums independently of each other.
 }}
 }
+\value{
+The rounded matrix.
+}
 \description{
 Applies \code{round_matrix()} to equally-sized blocks that partition the
 matrix either vertically or horizontally.
